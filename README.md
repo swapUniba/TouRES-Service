@@ -50,3 +50,46 @@ $ sh runNetworks.sh
 ```bash
 $ sh activate_server.sh
 ```
+
+
+# Alternative installation on Linux
+* STEP0:
+```bash
+$ sudo apt-get update
+```
+* STEP1: 
+```bash
+$ sudo apt-get install python-virtualenv
+```
+* STEP2:
+```bash
+$ sudo apt-get install python3-pip
+```
+* STEP3(to create a virtual environment):
+```bash
+$ sudo pip install virtualenv
+```
+* STEP4:
+```bash
+$ cd /path/to/TouRES
+```
+* STEP5:
+```bash
+$ virtual Venv
+```
+* STEP6:
+```bash
+$ . Venv/bin/activate
+```
+* STEP7:
+```bash
+$ pip install numpy scipy keras tensorflow pandas flask flask-cors psutil sklearn
+```
+* STEP8:
+```bash
+$ sh runNetworks.sh
+```
+* STEP9:
+```bash
+$ sh activate_server.sh
+```
