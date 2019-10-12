@@ -1,0 +1,48 @@
+INSTALLAZIONE STEP BY STEP DI TouRES SErvice SU LINUX
+
+PASSO1: sudo apt-get install python3-pip
+        sudo apt-get install python3-setuptools
+
+PASSO2: aprire il prompt dei comandi e creare un ambiente virtuale digitando il comando: pip3 install virtualenv
+
+PASSO 3:   sudo apt-get update
+           sudo apt-get install python-psutil
+           sudo apt-get install python-dev
+           pip3 install wheel
+           sudo apt install python3-flask
+           pip3 install -U protobuf
+
+PASSO4: eseguire il comando: pip3 install numpy scipy keras tensorflow pandas flask flask-cors psutil sklearn
+
+PASSO5: chmod u+x runNetworks.sh activate_server.sh
+			
+PASSO6: eseguire lo script "runNetworks.sh" (doppio clic sullo script), attendere la chiusura della CLI
+
+PASSO7: eseguire lo script "activate_server.sh" (doppio clic sullo script)
+
+
+
+
+N.B Se questa guida non dovesse funzionare, seguire in alternativa i passi che seguono
+
+PASSO1: sudo apt-get install python-virtualenv
+
+PASSO2: sudo apt-get install python3-pip
+
+PASSO3: sudo pip install virtualenv
+
+PASSO4: cd /path/to/TouRES
+
+PASSO5:virtual Venv
+
+PASSO6: . Venv/bin/activate
+
+PASSO7: pip install numpy scipy keras tensorflow pandas flask flask-cors psutil sklearn
+
+PASSO8: . Venv/bin/activate
+
+PASSO9: chmod u+x runNetworks.sh activate_server.sh
+			
+PASSO10: eseguire lo script "runNetworks.sh" (doppio clic sullo script), attendere la chiusura della CLI
+
+PASSO11: eseguire lo script "activate_server.sh" (doppio clic sullo script)
