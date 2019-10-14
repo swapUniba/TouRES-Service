@@ -128,7 +128,7 @@
 					position[0] = location.coords.latitude;
 					position[1] = location.coords.longitude;
 					json = {"interests": interests, "age": age, "gender": gender, "city": city, "position": position, "details": details, "meal": meal, "cost": budget, "personality": personality, "sleep": sleep, "health": health, "humor": humor, "physical_activity": physical_activity}
-					axios.post('http://90.147.102.243:6060', json) 
+					axios.post('http://127.0.0.1:5000', json) 
 						.then((resp) => {				
 							out = Object.values(resp.data);
 							console.log(out)
