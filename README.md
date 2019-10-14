@@ -93,3 +93,6 @@ $ sh runNetworks.sh
 ```bash
 $ sh activate_server.sh
 ```
+
+# Testing
+To test the system, you can use the web app. We need to run the batch script "activate_server_out.bat", then open the HTML page "web page Recommender.html"
