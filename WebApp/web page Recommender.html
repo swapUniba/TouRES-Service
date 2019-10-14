@@ -1,0 +1,370 @@
+<html lang="it-IT"> 
+	<head> 
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script> 
+			function sendData() {
+				 //$("#confirm").attr("disabled", true);
+				var interests = document.getElementById('interests').value; 
+				var age;
+				if(document.getElementById('age').value == ""){
+					age = -1;
+				} else {
+					age = parseInt(document.getElementById('age').value); 
+				}
+	
+				var gender;
+				if(document.getElementById("male").checked)
+					gender = "maschio";
+				else
+					gender = "femmina";
+					
+				var humor, sleep, health, physical_activity;
+				var personality = [];
+			
+				if ($('#other_info').is(':visible')){
+					if(document.getElementById('humor').checked)
+						humor = 1;
+					else{
+						if(document.getElementById('no_humor').checked)
+							humor = 0;
+						else
+							humor = -1;
+					}
+					if(document.getElementById('sleep').checked)
+						sleep = "sufficiente";
+					else{
+						if(document.getElementById('no_sleep').checked)
+							sleep = "non sufficiente";
+						else
+							sleep = "";
+					}
+					if(document.getElementById('physical_activity').checked)
+						physical_activity = "molta attività";
+					else{
+						if(document.getElementById('no_physical_activity').checked)
+							physical_activity = "poca attività";
+						else
+							physical_activity = "";
+					}
+					if(document.getElementById('health').checked)
+						health = "buona";
+					else{
+						if(document.getElementById('no_health').checked)
+							health = "non buona";
+						else
+							health = "";
+					}					
+					if(document.getElementById('extraversion').checked)
+						personality[0] = 1;
+					else{
+						if(document.getElementById('no_extraversion').checked)
+							personality[0] = 0;
+						else
+							personality[0] = -1;
+					}
+					if(document.getElementById('friendly').checked)
+						personality[1] = 1;
+					else{
+						if(document.getElementById('no_friendly').checked)
+							personality[1] = 0;
+						else
+							personality[1] = -1;
+					}
+					if(document.getElementById('conscientiousness').checked)
+						personality[2] = 1;
+					else{
+						if(document.getElementById('no_conscientiousness').checked)
+							personality[2] = 0;
+						else
+							personality[2] = -1;
+					}
+					if(document.getElementById('no_emot_stable').checked)
+						personality[3] = 0;
+					else{
+						if(document.getElementById('emot_stable').checked)
+							personality[3] = 1;
+						else
+							personality[3] = -1;
+					}
+					if(document.getElementById('open-mindedness').checked)
+						personality[4] = 1;
+					else{
+						if(document.getElementById('no_open-mindedness').checked)
+							personality[4] = 0;
+						else
+							personality[4] = -1;
+					}
+				}
+				else {
+					personality = [-1,-1,-1,-1,-1];
+					sleep = "";
+					health = "";
+					humor = -1;
+					physical_activity = "";
+				}
+				
+				var budget = "";
+				var meal = "";
+				var city = document.getElementById('city').value;
+				switch(interests) {
+					case "hotel":
+						var details = [document.getElementById('details_hotels').value]; 
+						break;
+					case "ristoranti":
+						var details = [document.getElementById('details_res').value]; 
+						budget = document.getElementById('price').value;
+						meal = document.getElementById('meal').value;
+						break;
+					case "altro":
+						var details = [document.getElementById('details_places').value]; 
+						break;
+				}
+				var position = [];
+				navigator.geolocation.getCurrentPosition(function(location) {
+					position[0] = location.coords.latitude;
+					position[1] = location.coords.longitude;
+					json = {"interests": interests, "age": age, "gender": gender, "city": city, "position": position, "details": details, "meal": meal, "cost": budget, "personality": personality, "sleep": sleep, "health": health, "humor": humor, "physical_activity": physical_activity}
+					axios.post('http://90.147.102.243:6060', json) 
+						.then((resp) => {				
+							out = Object.values(resp.data);
+							console.log(out)
+							if (out[1] == true) {
+								json2 = {"interests": interests, "age": age, "gender": gender, "city": city, "position": position, "details": details, "meal": meal, "cost": budget, "personality": personality, "sleep": sleep, "health": health, "humor": humor, "physical_activity": physical_activity, "output": out};
+								axios.post('http://127.0.0.1:5001', json2);
+								window.open("raccomandazioni.html");
+							}
+							else{
+								window.document.write("Ops! Qualcosa è andato storto");					
+							}
+						})
+						.catch((error) => {
+							console.log(error);
+						});	
+				});					
+			}
+		</script>
+	</head> 
+ 
+	<body> 
+		<div class="container">
+			<div class="row">
+				<div class="col-md-1"> </div>
+				<div align = center class="col-md-10" style="background-color: #FAEBD7">
+					<header><h1>Ricevi suggerimenti sui luoghi da visitare! </h1></header> 				
+					<label for='interests'>Interessi:*</label>
+					<select class="form-control" style="width: 300px;" id='interests' >
+						<option value="hotel" selected> Hotel </option>
+						<option value="ristoranti"> Ristoranti </option>
+						<option value="altro"> Luoghi da visitare </option>
+					</select>
+					<br><br>
+					<label for='gender'>Genere:&nbsp&nbsp </label>
+					<input type="radio" name="gender" id="male"> Maschio&nbsp&nbsp&nbsp
+					<input type="radio" name="gender" id="female"> Femmina<br>
+					<p style="color:red" id="error2"></p>
+					<br>
+					<label for='age'>Età:</label>
+					<input class="form-control" style = "width: 90px;" type="number" id='age' value="" placeholder="Età" min = 7 max = 100 required>
+					<p style="color:red" id="error"></p>
+					<br><br>
+					<div id=other_info class="card" style="background-color: transparent;" >
+						<div class="card-text" >
+							<legend class="scheduler-border">Come ti senti in questo momento? </legend>
+							<label for="humor"> Buon umore:</label> &nbsp&nbspSì <input type="radio" id="humor" name="humor">&nbsp&nbsp&nbsp&nbspNo <input type="radio" name="humor" id="no_humor" >
+							<label for="sleep">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspRiposato/a:</label> &nbsp&nbspSì <input type="radio" name="sleep" id="sleep" >&nbsp&nbsp&nbsp&nbspNo <input type="radio" name="sleep" id="no_sleep" >
+							<label for="physical activity">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspSportivo/a:</label> &nbsp&nbspSì <input type="radio" name="physical_activity" id="physical_activity" >&nbsp&nbsp&nbsp&nbspNo <input type="radio" name="physical_activity" id="no_physical_activity" > <br>
+							<label for="health">&nbsp&nbsp&nbsp&nbsp&nbsp&nbspBuona salute:</label> &nbsp&nbspSì <input type="radio" name="health" id="health" >&nbsp&nbsp&nbsp&nbspNo <input type="radio" name="health" id="no_health" ><br><br>
+							<label for="extraversion">Estroverso/a:</label> &nbsp&nbspSì <input type="radio" name="extraversion" id="extraversion" >&nbsp&nbsp&nbsp&nbspNo <input type="radio" name="extraversion" id="no_extraversion" >
+							<label for="friendly">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspAmichevole:</label> &nbsp&nbspSì <input type="radio" name="friendly" id="friendly" >&nbsp&nbsp&nbsp&nbspNo <input type="radio" name="friendly" id="no_friendly" >
+							<label for="conscientiousness">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCoscienzioso/a:</label> &nbsp&nbspSì <input type="radio" name="conscientiousness" id="conscientiousness" >&nbsp&nbsp&nbsp&nbspNo <input type="radio" name="conscientiousness" id="no_conscientiousness" ><br>
+							<label for="emot_stable">Emotivo/a:</label> &nbsp&nbspSì <input type="radio" name="emot_stable" id="no_emot_stable" >&nbsp&nbsp&nbsp&nbspNo <input type="radio" name="emot_stable" id="emot_stable" >
+							<label for="open-mindedness">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspAperto/a mentalmente:</label> &nbsp&nbspSì <input type="radio" id="open-mindedness" name="open-mindedness">&nbsp&nbsp&nbsp&nbspNo <input type="radio" name="open-mindedness" id="no_open-mindedness" >
+						</div>
+					</div>
+					<br>
+					<label for='city'>Città d'interesse:</label>
+					<select class="form-control" style="width: 300px;" id='city' >
+						<option value="" selected> </option>
+						<option value="Acquaviva"> Acquaviva </option>
+						<option value="Adelfia"> Adelfia </option>
+						<option value="Alberobello"> Alberobello </option>
+						<option value="Altamura"> Altamura </option>
+						<option value="Bari"> Bari </option>
+						<option value="Binetto"> Binetto </option>
+						<option value="Bitetto"> Bitetto </option>
+						<option value="Bitonto"> Bitonto </option>
+						<option value="Bitritto"> Bitritto </option>
+						<option value="Capurso"> Capurso </option>
+						<option value="Casamassima"> Casamassima </option>
+						<option value="Cassano"> Cassano </option>
+						<option value="Cellamare"> Cellamare </option>
+						<option value="Conversano"> Conversano </option>
+						<option value="Corato"> Corato </option>
+						<option value="Gioia"> Gioia del Colle </option>
+						<option value="Giovinazzo"> Giovinazzo </option>
+						<option value="Gravina"> Gravina </option>
+						<option value="Locorotondo"> Locorotondo </option>
+						<option value="Modugno"> Modugno </option>
+						<option value="Mola"> Mola di Bari </option>
+						<option value="Molfetta"> Molfetta </option>
+						<option value="Monopoli"> Monopoli </option>
+						<option value="Noci"> Noci </option>
+						<option value="Noicattaro"> Noicattaro </option>
+						<option value="Poggiorsini"> Poggiorsini </option>
+						<option value="Polignano"> Polignano </option>
+						<option value="Putignano"> Putignano </option>
+						<option value="Rutigliano"> Rutigliano </option>
+						<option value="Ruvo"> Ruvo di Puglia </option>
+						<option value="Terlizzi"> Terlizzi </option>
+						<option value="Toritto"> Toritto </option>
+						<option value="Triggiano"> Triggiano </option>
+						<option value="Turi"> Turi </option>
+						<option value="Valenzano"> Valenzano </option>
+					</select>
+					<br><br>
+					<div id="pref_restaurants">
+						<div class="d-inline-block">
+							<label for="meal">Pasto d'interesse:</label>
+							<select class="form-control" style="width: 300px;" id='meal' >
+								<option value=" " selected="selected"> </option>
+								<option value="colazione"> Colazione </option>
+								<option value="pranzo"> Pranzo </option>
+								<option value="cena"> Cena </option>
+							</select>
+						</div>
+						<br><br>
+						<div class="d-inline-block">
+							<label for='price'>Fascia di prezzo:</label>
+							<select class="form-control" style="width: 300px;" id='price' >
+								<option value=" " selected="selected"> </option>								
+								<option value="economico"> Economico </option>
+								<option value="medio"> Medio </option>
+								<option value="costoso"> Costoso </option>
+							</select>
+						</div>
+						<br><br>
+						<div class="d-inline-block">
+							<label for='details'>Esigenze particolari per ristoranti:</label>
+							<select class="form-control" style="width: 300px;" id='details_res'>
+								<option value="" selected="selected"> </option>
+								<option value="mediterranea"> Cucina mediterranea </option>
+								<option value="senza glutine"> Senza glutine </option>
+								<option value="vegetariani"> Dieta vegetariana  </option>
+								<option value="europea"> Cucina europea  </option>
+								<option value="vegane"> Dieta vegana  </option>
+								<option value="italiana"> Cucina italiana </option>
+							</select>								
+						</div>
+					</div>
+					<div id="pref_hotels">
+						<label for='details'>Esigenze particolari per hotel:</label>
+						<select class="form-control" style="width: 300px;" id='details_hotels'>
+							<option value="" selected="selected"> </option>
+							<option value="servizio in camera"> Servizio in camera </option>
+							<option value="piscina"> Piscina </option>
+							<option value="WiFi"> WiFi </option>
+							<option value="aria condizionata"> Aria condizionata </option>
+							<option value="non fumatori"> Camere non fumatori </option>
+							<option value="colazione inclusa"> Colazione inclusa </option>
+							<option value="parcheggio gratuito"> Parcheggio gratuito </option>
+							<option value="cucinino"> Cucinino </option>
+							<option value="frigorifero"> Frigorifero </option>
+							<option value="spa"> Spa </option>
+							<option value="navetta"> Servizio navetta </option>
+							<option value="minibar"> Minibar </option>
+							<option value="suite"> Suite </option>
+							<option value="famiglie"> Camere per famiglie </option>
+							<option value="microonde"> Microonde </option>
+							<option value="disabili"> Camere con accesso per disabili </option>
+							<option value="fitness"> Sala fitness </option>
+							<option value="lavanderia"> Servizio lavanderia </option>
+							<option value="bar"> Bar </option>
+						</select>								
+					</div>
+					<div id="pref_places">
+						<label for='details'>Esigenze particolari per luoghi da visitare:</label>
+						<select class="form-control" style="width: 300px;" id='details_places'>
+							<option value="" selected="selected"> </option>
+							<option value="monumenti"> Monumenti </option>
+							<option value="musei"> Musei </option>
+							<option value="chiese"> Chiese </option>
+							<option value="cattedrali"> Cattedrali </option>
+							<option value="porti"> Porti </option>
+							<option value="cinema"> Cinema </option>
+							<option value="centri commerciali"> Centri commerciali </option>
+							<option value="parchi"> Parchi </option>
+							<option value="storici"> Siti storici </option>
+							<option value="spa"> Spa </option>
+							<option value="castelli"> Castelli </option>
+						</select>								
+					</div>					
+					<br><br>
+					<input class="btn btn-lg btn-primary" type="submit" value="Invia dati" id="confirm" onclick="checkInput()">
+					<br><br>
+				</div>
+				<div class="col-md"> </div>
+			</div>
+			<br>
+		</div>
+		
+		<script>			
+			function checkInput(){
+				document.getElementById("error").innerHTML = "";
+				document.getElementById("error2").innerHTML = "";
+				var age = document.getElementById("age").value;
+				var check = true;
+				if(age == ""){
+					check = false;
+					document.getElementById("error").innerHTML = "Inserire età!";
+				}
+				if(!document.getElementById("male").checked && !document.getElementById("female").checked){
+					check = false;
+					document.getElementById("error2").innerHTML = "Inserire genere!";
+				}
+				if(check == true)
+					sendData();
+			}
+			
+			$(function() {
+				$('#pref_hotels').show(); 
+				$('#interests').change(function(){
+					if($('#interests').val() == 'hotel') {
+						$('#pref_hotels').show(); 
+					} else {
+						$('#pref_hotels').hide(); 
+					} 
+				});
+			});
+			
+			$(function() {
+				$('#pref_hotels').show(); 
+				$('#pref_restaurants').hide(); 
+				$('#interests').change(function(){
+					if($('#interests').val() == 'ristoranti') {
+						$('#pref_hotels').hide(); 
+						$('#pref_restaurants').show(); 
+					} else {
+						$('#pref_restaurants').hide(); 
+					} 
+				});
+			});
+			
+			$(function() {
+				$('#pref_hotels').show();
+				$('#pref_places').hide(); 
+				$('#interests').change(function(){
+					if($('#interests').val() == 'altro') {
+						$('#pref_hotels').hide(); 
+						$('#pref_places').show(); 
+					} else {
+						$('#pref_places').hide();  
+					} 
+				});
+			});
+		</script>
+	</body> 
+</html>
